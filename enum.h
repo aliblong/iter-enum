@@ -1,3 +1,5 @@
+// With (heavy) inspiration from:
+//   http://www.drdobbs.com/when-enum-just-isnt-enough-enumeration-c/184403955
 #ifndef ENUM_H_
 #define ENUM_H_
 
