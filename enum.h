@@ -13,17 +13,25 @@ template <class T>
 class Enum {
  private:
   // Comparator used to determine enum item ordering
-  struct EnumLTComparator {
+  struct EnumComparator_p {
     bool operator() (const T* e1, const T* e2) {
       return e1->value() < e2->value();
     }
   };
+  struct EnumComparator_r {
+    bool operator() (const T& e1, const T& e2) {
+      return e1.value() < e2.value();
+    }
+  };
 
  public:
-  typedef std::set<const T*, EnumLTComparator> ItemsSet;
-  typedef typename ItemsSet::size_type set_size_type;
-  typedef typename ItemsSet::const_iterator const_iterator;
-  typedef typename ItemsSet::const_reverse_iterator const_r_iterator;
+  typedef std::set<const T*, EnumComparator_p> StaticItemsSet;
+  typedef typename StaticItemsSet::size_type set_size_type;
+  typedef typename StaticItemsSet::const_iterator const_iterator;
+  typedef typename StaticItemsSet::const_reverse_iterator const_r_iterator;
+  typedef std::set<T, EnumComparator_r> LocalItemsSubset;
+
+  bool operator== (const T& e2) const {return this->value() == e2.value();}
 
   int value() const { return value_; }
   static set_size_type size() { return items_.size(); }
@@ -34,13 +42,11 @@ class Enum {
   static const_r_iterator rbegin() { return items_.crbegin(); }
   static const_r_iterator rend() { return items_.crend(); }
 
-  bool operator== (T e2) const {return this->value() == e2.value();}
-
   // Return a set which contains pointers to any number of unique enum items
-  static ItemsSet Subset(std::initializer_list<T> items) {
-    ItemsSet subset;
+  static LocalItemsSubset Subset(std::initializer_list<T> items) {
+    LocalItemsSubset subset;
     for (auto i: items) {
-      subset.insert(CorrespondingEnum(i.value()));
+      subset.insert(i);
     }
     return subset;
   }
@@ -81,7 +87,7 @@ class Enum {
   }
 
   int value_;
-  static ItemsSet items_;
+  static StaticItemsSet items_;
 };
 
 #endif

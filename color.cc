@@ -2,7 +2,7 @@
 #include "enum.h"
 
 template<>
-typename Enum<Color>::ItemsSet Enum<Color>::items_{};
+typename Enum<Color>::StaticItemsSet Enum<Color>::items_{};
 
 const Color Color::blue(0);
 const Color Color::green(1);
