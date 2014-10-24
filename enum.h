@@ -9,27 +9,31 @@
 #include <iostream>
 #include <set>
 
+#define INIT_ENUM(class_name) \
+  template<> \
+  typename Enum<class_name>::StaticItemsSet Enum<class_name>::items_{}
+
 template <class T>
 class Enum {
  private:
   // Comparator used to determine enum item ordering
-  struct EnumComparator_p {
+  struct ItemComparator_p {
     bool operator() (const T* e1, const T* e2) {
       return e1->value() < e2->value();
     }
   };
-  struct EnumComparator_r {
+  struct ItemComparator_r {
     bool operator() (const T& e1, const T& e2) {
       return e1.value() < e2.value();
     }
   };
 
  public:
-  typedef std::set<const T*, EnumComparator_p> StaticItemsSet;
+  typedef std::set<const T*, ItemComparator_p> StaticItemsSet;
   typedef typename StaticItemsSet::size_type set_size_type;
   typedef typename StaticItemsSet::const_iterator const_iterator;
   typedef typename StaticItemsSet::const_reverse_iterator const_r_iterator;
-  typedef std::set<T, EnumComparator_r> LocalItemsSubset;
+  typedef std::set<T, ItemComparator_r> Subset;
 
   bool operator== (const T& e2) const {return this->value() == e2.value();}
 
@@ -43,8 +47,8 @@ class Enum {
   static const_r_iterator rend() { return items_.crend(); }
 
   // Return a set which contains pointers to any number of unique enum items
-  static LocalItemsSubset Subset(std::initializer_list<T> items) {
-    LocalItemsSubset subset;
+  static Subset BuildSubset(std::initializer_list<T> items) {
+    Subset subset;
     for (auto i: items) {
       subset.insert(i);
     }

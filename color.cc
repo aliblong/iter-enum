@@ -1,8 +1,7 @@
 #include "color.h"
 #include "enum.h"
 
-template<>
-typename Enum<Color>::StaticItemsSet Enum<Color>::items_{};
+INIT_ENUM(Color);
 
 const Color Color::blue(0);
 const Color Color::green(1);
